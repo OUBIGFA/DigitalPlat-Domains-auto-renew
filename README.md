@@ -1,6 +1,16 @@
-# DigitalPlat 免费域名自动续期
+<div align="center">
+  <h1>DigitalPlat 免费域名自动续期</h1>
+  <p>每周自动检查 DigitalPlat 域名，到期前自动免费续期</p>
+  <p>简体中文 | <a href="README.en.md">English</a></p>
+  <p>
+    <img alt="Python" src="https://img.shields.io/badge/python-3.10%2B-3776AB">
+    <img alt="Platform" src="https://img.shields.io/badge/platform-GitHub%20Actions-2088FF">
+    <img alt="License" src="https://img.shields.io/badge/license-MIT-111827">
+    <img alt="Schedule" src="https://img.shields.io/badge/schedule-Weekly-22c55e">
+  </p>
+</div>
 
-这个仓库每周检查一次你的 DigitalPlat 域名。只有域名进入免费续期窗口后，工作流才会调用 DigitalPlat API 自动续期。
+> 只需 3 分钟部署，之后每周自动检查并续期你的 DigitalPlat 免费域名。
 
 ## 3 分钟部署
 
@@ -27,7 +37,7 @@
 
 | 字段 | 填什么 |
 | --- | --- |
-| `Your old repository's clone URL` | `https://github.com/OUBIGFA/DigitalPlat-Domains-auto-BIGFA` |
+| `Your old repository's clone URL` | `https://github.com/OUBIGFA/DigitalPlat-Domains-auto-renew` |
 | `Owner` | 你的 GitHub 账号 |
 | `Repository name` | 你的仓库名，例如 `my-digitalplat-auto-renew` |
 | `Privacy` | 选 `Private` |
@@ -76,16 +86,6 @@ example.qzz.io
 
 如果域名还没进入窗口，脚本只记录检查状态，不会调用续期接口。
 
-## 本地测试
-
-```powershell
-$env:DIGITALPLAT_API_TOKEN='your_token'
-$env:DIGITALPLAT_DOMAINS="example.dpdns.org`nexample.qzz.io"
-python .\scripts\digitalplat_auto_renew.py --state .\state\domains-state.json --dry-run
-```
-
-`--dry-run` 只检查逻辑，不会续期，也不会写入状态文件。
-
 ## 文件说明
 
 - `scripts/digitalplat_auto_renew.py`：续期脚本
@@ -105,3 +105,7 @@ python .\scripts\digitalplat_auto_renew.py --state .\state\domains-state.json --
 - `https://domain-api.digitalplat.org/api/v1`
 
 如果官方文档后续调整 API Base，可在 GitHub Variables 里添加 `DIGITALPLAT_API_BASE` 并同步修改 workflow 环境变量。
+
+## 许可证
+
+本项目使用 MIT License。
