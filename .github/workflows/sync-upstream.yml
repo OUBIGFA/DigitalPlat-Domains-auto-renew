@@ -1,0 +1,57 @@
+name: Sync upstream template files
+
+on:
+  schedule:
+    - cron: '17 18 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync-upstream-template:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out your repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Skip if this IS the upstream repository
+        id: guard
+        run: |
+          if [ "${{ github.repository }}" = "OUBIGFA/DigitalPlat-Domains-auto-renew" ]; then
+            echo "Running on the upstream repo itself, skip syncing."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Add upstream remote and fetch
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          git remote add upstream https://github.com/OUBIGFA/DigitalPlat-Domains-auto-renew.git 2>/dev/null \
+            || git remote set-url upstream https://github.com/OUBIGFA/DigitalPlat-Domains-auto-renew.git
+          git fetch upstream main --depth=1
+
+      - name: Replace local template files with upstream versions
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          git checkout upstream/main -- scripts/ README.md .github/workflows/digitalplat-auto-renew.yml
+
+      - name: Commit and push if changed
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Template files already match upstream, nothing to commit."
+            exit 0
+          fi
+          git add scripts/ README.md .github/workflows/digitalplat-auto-renew.yml
+          git commit -m "chore(template): sync upstream from OUBIGFA/DigitalPlat-Domains-auto-renew [auto]"
+          git push
